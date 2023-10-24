@@ -80,8 +80,22 @@ async function run() {
       try {
         const collection = database.collection('stops');
 
-        // Retrieve all stop_id values starting with the format provided in the routeId query parameter
-        const stops = await collection.find({ stop_id: new RegExp(`^${routeId}_\\w+`) }, { projection: { _id: 0, stop_id: 1, stop_name: 1, stop_lat: 1, stop_lon: 1 } }).toArray();
+        // Retrieve unique stop_id values starting with the format provided in the routeId query parameter
+        const stops = await collection.aggregate([
+          {
+            $match: {
+              stop_id: new RegExp(`^${routeId}_\\w+`)
+            }
+          },
+          {
+            $group: {
+              _id: '$stop_id',
+              stop_name: { $first: '$stop_name' },
+              stop_lat: { $first: '$stop_lat' },
+              stop_lon: { $first: '$stop_lon' }
+            }
+          }
+        ]).toArray();
 
         // Send the stop_id values as the API response
         res.json(stops);
