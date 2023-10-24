@@ -2,6 +2,16 @@
 
 There are total 3 APIs
 
+## Setup the Server
+- Install the environment
+```bash
+npm install
+```
+- Run the Server
+```bash
+node Server.js
+```
+
 ### 1. Get the coordinate of a bus stop
 
 GET METHOD
