@@ -34,6 +34,24 @@ async function run() {
     const database = client.db("gcrta_bus"); 
 
     // API Endpoint 
+
+    // Get all routes
+    app.get('/getAllRouteIds', async (req, res) => {
+      try {
+        const collection = database.collection('routes');
+
+        // Retrieve all route_id values from the collection
+        const routeIds = await collection.find({}, { projection: { _id: 0, route_id: 1 } }).toArray();
+
+        // Send the route_id values as the API response
+        res.json(routeIds);
+      } catch (error) {
+        console.error('Error occurred while querying MongoDB', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+    
+
     // get all trip ids of a given route (route id)
     app.get('/getTripIds/:route_id', async (req, res) => {
         
