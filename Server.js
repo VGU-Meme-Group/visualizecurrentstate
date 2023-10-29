@@ -35,7 +35,7 @@ async function run() {
 
     // API Endpoint 
 
-    // Get all routes
+    // Get all route ids
     app.get('/getAllRouteIds', async (req, res) => {
       try {
         const collection = database.collection('routes');
@@ -50,6 +50,29 @@ async function run() {
         res.status(500).json({ error: 'Internal Server Error' });
       }
     });
+
+    // Get route long name
+    app.get('/getRouteLongName', async (req, res) => {
+      const routeId = req.query.stop_id;
+  
+        try {
+          const routesCollection = database.collection('routes');
+          const routeInfo = await routesCollection.findOne({ stop_id: routeId });
+  
+          if (routeInfo) {
+            // If stop_id is found, send the response with the retrieved data
+            res.json({
+              route_long_name: routeInfo.route_long_name,
+            });
+          } else {
+            res.status(404).json({ error: 'Stop not found.' });
+          }
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
+    
     
 
     // get all trip ids of a given route (route id)
@@ -71,7 +94,10 @@ async function run() {
             .find({ route_id: routeId })
             .toArray();
   
-          res.json(tripIds.map(trip => trip.trip_id));
+          // res.json(tripIds.map(trip => trip.trip_id));
+          // res.json(tripIds.trip_id);
+          res.json(tripIds.map(trip => ({ trip_id: trip.trip_id })));
+
         } catch (error) {
           console.error(error);
           res.status(500).json({ error: 'Internal Server Error' });
@@ -96,7 +122,7 @@ async function run() {
             .find({ trip_id: tripId })
             .toArray();
   
-          res.json(stopIds.map(stopTime => stopTime.stop_id));
+          res.json(stopIds.map(stopTime => ({stop_id: stopTime.stop_id})));
         } catch (error) {
           console.error(error);
           res.status(500).json({ error: 'Internal Server Error' });
