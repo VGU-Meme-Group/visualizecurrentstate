@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: visualize-current-state-depl
+  name: visualize-current-state-depl
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: visualize-current-state-depl
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: visualize-current-state-depl
+    spec:
+      containers:
+      - image: minhquanvus/visualize-current-state
+        imagePullPolicy: IfNotPresent
+        name: visualize-current-state-depl
+        ports:
+          - containerPort: 3812
+            protocol: TCP
+        env:
+          - name: SERVER_PORT
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: SERVER_PORT
+          - name: MONGODB_ATLAS_USER
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: MONGODB_ATLAS_USER
+          - name: MONGODB_ATLAS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: MONGODB_ATLAS_PASSWORD
+          - name: MONGODB_ATLAS_CLUSTER_ADDRESS
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: MONGODB_ATLAS_CLUSTER_ADDRESS
+          - name: MONGODB_DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-credentials
+                key: MONGODB_DATABASE_NAME
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+status: {}
