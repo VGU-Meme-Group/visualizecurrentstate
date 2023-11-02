@@ -4,5 +4,4 @@ node_modules/
 data_streaming/
 trip_updates.json
 vehicle_positions.json
-api_function.js
 test.py
