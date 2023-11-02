@@ -21,7 +21,7 @@ spec:
         app: visualize-current-state-depl
     spec:
       containers:
-      - image: minhquanvus/visualize-current-state:01
+      - image: minhquanvus/visualize-current-state:02
         imagePullPolicy: IfNotPresent
         name: visualize-current-state-depl
         ports:
